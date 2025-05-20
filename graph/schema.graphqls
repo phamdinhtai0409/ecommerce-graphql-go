@@ -1,0 +1,52 @@
+type Product {
+  id: ID!
+  name: String!
+  price: Float!
+  inStock: Int!
+  description: String
+  category: String!
+}
+
+type Order {
+  id: ID!
+  products: [Product!]!
+  total: Float!
+  createdAt: String!
+  status: String!
+  user: User!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  role: Role!
+}
+
+type Query {
+  products(limit: Int, offset: Int, category: String): [Product!]!
+  product(id: ID!): Product
+  orders: [Order!]!
+  order(id: ID!): Order
+}
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+type Mutation {
+  createProduct(input: ProductInput!): Product @hasRole(role: ADMIN)
+  updateProduct(id: ID!, input: ProductInput!): Product @hasRole(role: ADMIN)
+  placeOrder(productIds: [ID!]!): Order @hasRole(role: CUSTOMER)
+}
+
+input ProductInput {
+  name: String!
+  price: Float!
+  inStock: Int!
+  description: String
+  category: String!
+}

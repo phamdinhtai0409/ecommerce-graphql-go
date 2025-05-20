@@ -1,0 +1,8 @@
+# IDE specific files
+.vscode/
+
+# Environment files
+.env
+
+# Binary output directory
+bin/
