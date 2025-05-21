@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"ecommerce-graphql-go/graph/model"
+	"ecommerce-graphql-go/loaders"
 	"ecommerce-graphql-go/util"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -39,10 +40,14 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, input model.Produc
 
 // UpdateProduct is the resolver for the updateProduct field.
 func (r *mutationResolver) UpdateProduct(ctx context.Context, id string, input model.ProductInput) (*model.Product, error) {
-	product := r.Resolver.Data.GetProduct(id)
+	product, err := loaders.GetProduct(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("error loading product: %v", err)
+	}
 	if product == nil {
 		return nil, fmt.Errorf("product not found")
 	}
+
 	product.Name = input.Name
 	product.Price = input.Price
 	product.InStock = input.InStock
@@ -68,7 +73,10 @@ func (r *mutationResolver) PlaceOrder(ctx context.Context, productIds []string) 
 	var products []*model.Product
 	var total float64
 	for _, id := range productIds {
-		product := r.Resolver.Data.GetProduct(id)
+		product, err := loaders.GetProduct(ctx, id)
+		if err != nil {
+			return nil, fmt.Errorf("error loading product: %v", err)
+		}
 		if product == nil {
 			return nil, fmt.Errorf("product not found: %s", id)
 		}
@@ -112,9 +120,9 @@ func (r *queryResolver) Products(ctx context.Context, limit *int32, offset *int3
 
 // Product is the resolver for the product field.
 func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product, error) {
-	product := r.Resolver.Data.GetProduct(id)
-	if product == nil {
-		return nil, nil
+	product, err := loaders.GetProduct(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("error loading product: %v", err)
 	}
 
 	return &model.Product{

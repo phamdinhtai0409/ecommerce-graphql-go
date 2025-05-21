@@ -9,7 +9,8 @@ import (
 type contextKey string
 
 const (
-	UserContextKey contextKey = "user"
+	UserContextKey   contextKey = "user"
+	LoaderContextKey contextKey = "dataloaders"
 )
 
 func GetUserFromContext(ctx context.Context) *model.User {

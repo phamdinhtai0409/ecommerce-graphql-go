@@ -49,8 +49,11 @@ func main() {
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.POST{})
 
+	// DataLoader middleware
+	serverLoaders := middleware.DataLoaderMiddleware(data, srv)
+
 	http.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
-	http.Handle("/graphql", middleware.AuthMiddleware(srv))
+	http.Handle("/graphql", middleware.AuthMiddleware(serverLoaders))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
