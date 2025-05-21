@@ -11,6 +11,7 @@ A GraphQL API for an e-commerce application built with Go, featuring user authen
 - Order processing
 - Environment configuration
 - Dockerization
+- Unit tests
 
 ## Prerequisites
 
@@ -254,11 +255,23 @@ mutation {
 
 ```
 .
-├── graph/              # GraphQL schema and resolvers
-├── data/              # Data layer
-├── middleware/        # HTTP middleware
+├── graph/            # GraphQL schema and resolvers
+├── data/             # Data layer
+├── middleware/       # HTTP middleware
 ├── util/             # Utility functions
 ├── server.go         # Main server file
 ├── .env              # Environment variables
 └── .env.example      # Example environment variables
+```
+
+### Running Tests
+
+To run all tests:
+```bash
+go test ./... -v
+```
+
+To run tests for a specific package:
+```bash
+go test ./{package_name} -v
 ```
